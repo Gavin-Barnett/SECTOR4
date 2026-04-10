@@ -11,6 +11,8 @@ from sqlalchemy.orm import sessionmaker
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("SEC_USER_AGENT", "SECTOR4/0.1 (test@example.com)")
+os.environ["MARKET_DATA_PROVIDER"] = ""
+os.environ["MARKET_DATA_API_KEY"] = ""
 
 from app.db.base import Base
 from app.db.session import get_db
@@ -18,7 +20,7 @@ from app.main import app
 from app.models import entities  # noqa: F401
 from app.schemas.signals import SignalRecomputeResponse
 from app.services.signals import SignalService
-from sector4_core.config import Settings
+from sector4_core.config import Settings, get_settings
 from sector4_core.observability import get_metrics_registry
 from sector4_sec_ingestion.fixtures import load_fixture_manifest, load_proxy_fixture_manifest
 from sector4_sec_ingestion.proxy_service import ProxyCompensationService
@@ -31,6 +33,15 @@ FIXTURES_DIR = Path(__file__).parent / "fixtures" / "sec"
 @pytest.fixture(autouse=True)
 def reset_metrics() -> None:
     get_metrics_registry().reset()
+
+
+@pytest.fixture(autouse=True)
+def reset_settings_cache() -> None:
+    get_settings.cache_clear()
+    try:
+        yield
+    finally:
+        get_settings.cache_clear()
 
 
 @pytest.fixture

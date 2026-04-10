@@ -5,7 +5,12 @@ from decimal import Decimal
 from sector4_core.config import Settings
 from sector4_core.enrichment import (
     CompositeIssuerEnrichmentProvider,
+    EventContextSnapshot,
+    HealthSnapshot,
     IssuerEnrichmentRequest,
+    IssuerEnrichmentSnapshot,
+    PriceContextSnapshot,
+    StaticIssuerEnrichmentProvider,
     get_issuer_enrichment_provider,
 )
 from sector4_core.market_data import AlphaVantagePriceEnrichmentProvider
@@ -183,3 +188,51 @@ def test_get_issuer_enrichment_provider_selects_alpha_vantage_composite() -> Non
         assert isinstance(provider, CompositeIssuerEnrichmentProvider)
     finally:
         provider.close()
+
+
+def test_composite_provider_replaces_placeholder_defaults_with_real_provider_diagnostics() -> None:
+    provider = CompositeIssuerEnrichmentProvider(
+        [
+            StaticIssuerEnrichmentProvider(
+                snapshots={
+                    "1234567": IssuerEnrichmentSnapshot(
+                        price_context=PriceContextSnapshot(
+                            status="unavailable",
+                            details={
+                                "reason": "market_data_fetch_failed",
+                                "provider": "alpha_vantage",
+                            },
+                        ),
+                        health=HealthSnapshot(
+                            status="unknown",
+                            details={
+                                "reason": "missing_current_ratio_inputs",
+                                "source": "sec_companyfacts",
+                            },
+                        ),
+                        event_context=EventContextSnapshot(
+                            status="unavailable",
+                            details={
+                                "reason": "historical_anchor_uses_sec_estimate",
+                                "provider": "alpha_vantage",
+                            },
+                        ),
+                    )
+                }
+            )
+        ]
+    )
+
+    snapshot = provider.enrich(
+        IssuerEnrichmentRequest(
+            cik="1234567",
+            ticker="ACME",
+            name="Acme Robotics, Inc.",
+            market_cap=None,
+            latest_price=None,
+        )
+    )
+
+    assert snapshot.price_context.details["reason"] == "market_data_fetch_failed"
+    assert snapshot.health.details["reason"] == "missing_current_ratio_inputs"
+    assert snapshot.event_context.details["reason"] == "historical_anchor_uses_sec_estimate"

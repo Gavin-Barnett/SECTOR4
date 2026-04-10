@@ -362,16 +362,23 @@ function SignalDashboard() {
   }
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex max-w-[1560px] flex-col gap-5 px-4 py-5 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-3 rounded-3xl border border-border/70 bg-card/80 px-4 py-4 shadow-sm backdrop-blur sm:flex-row sm:items-center sm:justify-between">
-          <div className="space-y-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="font-heading text-2xl font-medium tracking-tight sm:text-3xl">
-                SECTOR4
-              </h1>
-              <Badge variant="outline">Recent opportunities</Badge>
+      <div className="linear-shell">
+        <header className="linear-panel flex flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 items-start gap-3">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-[10px] border border-primary/25 bg-[radial-gradient(circle_at_top,_rgba(130,143,255,0.38),_rgba(94,106,210,0.12)_60%,_transparent_100%)] text-[11px] font-semibold tracking-[0.24em] text-primary">
+              S4
             </div>
-
+            <div className="min-w-0 space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <h1 className="font-heading text-[1.9rem] font-medium tracking-[-0.05em] sm:text-[2.05rem]">
+                  SECTOR4
+                </h1>
+                <Badge variant="outline">Recent opportunities</Badge>
+              </div>
+              <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
+                Public insider-buying signals from clustered open-market Form 4 activity.
+              </p>
+            </div>
           </div>
           <div className="flex items-center gap-2 self-start sm:self-auto">
             <Badge variant={statusVariant(healthStatus)}>
@@ -381,27 +388,37 @@ function SignalDashboard() {
           </div>
         </header>
 
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
-          <Card className="order-2 border-border/70 bg-card/85 shadow-sm xl:order-1">
-            <CardHeader className="gap-4 border-b border-border/60">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div className="space-y-1.5">
-                  <CardTitle className="text-xl">Opportunity board</CardTitle>
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
+          <Card className="linear-panel order-2 border-border/80 bg-card/92 xl:order-1">
+            <CardHeader className="gap-5 border-b border-border/80">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div className="space-y-2">
+                  <p className="linear-kicker">Signal board</p>
+                  <CardTitle className="text-[1.35rem] tracking-[-0.04em]">Ranked insider clusters</CardTitle>
                   <CardDescription>
-                    Recent opportunities ranked by signal score. Scanner defaults stay hidden so the
-                    board stays readable.
+                    Highest-conviction public filings first. Defaults stay hidden so the scan stays fast.
                   </CardDescription>
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <Badge variant="outline">
+                      {loadingSignals ? "Refreshing..." : `${formatCount(signals.length)} visible`}
+                    </Badge>
+                    {activeTicker ? (
+                      <Badge variant="secondary">Ticker {activeTicker}</Badge>
+                    ) : (
+                      <Badge variant="outline">Default scanner profile</Badge>
+                    )}
+                  </div>
                 </div>
                 <form
-                  className="flex w-full flex-col gap-2 sm:flex-row sm:items-end lg:w-auto"
+                  className="linear-subpanel flex w-full flex-col gap-3 p-3 sm:flex-row sm:items-end lg:w-auto"
                   onSubmit={(event) => {
                     event.preventDefault();
                     applyTickerSearch();
                   }}
                 >
-                  <div className="w-full sm:min-w-72">
+                  <div className="w-full sm:min-w-80">
                     <label
-                      className="mb-2 block text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground"
+                      className="linear-kicker mb-2 block"
                       htmlFor="ticker-search"
                     >
                       Ticker search
@@ -428,18 +445,8 @@ function SignalDashboard() {
                   </div>
                 </form>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline">
-                  {loadingSignals ? "Refreshing..." : `${formatCount(signals.length)} visible`}
-                </Badge>
-                {activeTicker ? (
-                  <Badge variant="secondary">Ticker {activeTicker}</Badge>
-                ) : (
-                  <Badge variant="outline">Scanner defaults active</Badge>
-                )}
-              </div>
             </CardHeader>
-            <CardContent className="pt-4">
+            <CardContent className="pt-5">
               {signalsError ? (
                 <Alert variant="destructive" className="mb-4">
                   <CircleAlertIcon />
@@ -466,16 +473,15 @@ function SignalDashboard() {
                 </Empty>
               ) : (
                 <>
-                  <div className="hidden xl:block">
+                  <div className="hidden overflow-hidden rounded-[16px] border border-border/80 bg-background/25 xl:block">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead className="w-[110px]">Score</TableHead>
-                          <TableHead>Opportunity</TableHead>
-                          <TableHead className="w-[210px]">Cluster</TableHead>
-                          <TableHead className="w-[220px]">Context</TableHead>
-                          <TableHead className="w-[160px]">Latest trade</TableHead>
-                          <TableHead className="w-[140px] text-right">Action</TableHead>
+                          <TableHead className="w-[118px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Score</TableHead>
+                          <TableHead className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Opportunity</TableHead>
+                          <TableHead className="w-[220px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Cluster</TableHead>
+                          <TableHead className="w-[220px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Context</TableHead>
+                          <TableHead className="w-[168px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Latest trade</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -486,25 +492,25 @@ function SignalDashboard() {
                           return (
                             <TableRow
                               className={cn(
-                                "cursor-pointer align-top transition-colors hover:bg-muted/35",
-                                isSelected && "bg-muted/35",
+                                "cursor-pointer align-top border-t border-border/70 transition-colors hover:bg-white/[0.025]",
+                                isSelected && "bg-[color:rgb(94_106_210_/_0.12)]",
                               )}
                               key={signal.id}
                               onClick={() => openSignalDetail(signal.id)}
                             >
                               <TableCell className="align-top">
-                                <div className="flex min-w-0 flex-col gap-1">
-                                  <span className="text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground">
+                                <div className="flex min-w-0 flex-col gap-1.5">
+                                  <span className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                                     #{index + 1}
                                   </span>
-                                  <span className="text-2xl font-semibold tabular-nums">
+                                  <span className="text-[2rem] font-medium tracking-[-0.06em] tabular-nums">
                                     {formatScore(signal.signal_score)}
                                   </span>
                                   <Badge variant={scoreDescriptor.variant}>{scoreDescriptor.label}</Badge>
                                 </div>
                               </TableCell>
                               <TableCell className="align-top whitespace-normal">
-                                <div className="space-y-3">
+                                <div className="space-y-3 py-0.5">
                                   <div className="flex flex-wrap items-center gap-2">
                                     <Badge variant="outline">{signal.ticker ?? signal.issuer_cik}</Badge>
                                     {signal.first_time_buyer_count > 0 ? (
@@ -514,7 +520,7 @@ function SignalDashboard() {
                                     ) : null}
                                   </div>
                                   <div className="space-y-1">
-                                    <div className="font-medium text-foreground">{signal.issuer_name}</div>
+                                    <div className="text-[15px] font-medium tracking-[-0.02em] text-foreground">{signal.issuer_name}</div>
                                     <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
                                       {signal.explanation}
                                     </p>
@@ -550,20 +556,6 @@ function SignalDashboard() {
                                   <div>{formatDateRange(signal.window_start, signal.window_end)}</div>
                                 </div>
                               </TableCell>
-                              <TableCell className="align-top text-right">
-                                <Button
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    openSignalDetail(signal.id);
-                                  }}
-                                  size="sm"
-                                  type="button"
-                                  variant={isSelected ? "secondary" : "outline"}
-                                >
-                                  View
-                                  <ArrowUpRightIcon data-icon="inline-end" />
-                                </Button>
-                              </TableCell>
                             </TableRow>
                           );
                         })}
@@ -579,7 +571,7 @@ function SignalDashboard() {
                         <Card
                           key={signal.id}
                           size="sm"
-                          className="border border-border/70 bg-background/70 shadow-sm"
+                          className="linear-subpanel border-border/80 bg-background/32"
                         >
                           <CardHeader className="gap-3">
                             <div className="flex items-start justify-between gap-3">
@@ -594,7 +586,7 @@ function SignalDashboard() {
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="text-2xl font-semibold tabular-nums">
+                                <div className="text-[2rem] font-medium tracking-[-0.06em] tabular-nums">
                                   {formatScore(signal.signal_score)}
                                 </div>
                                 <Badge variant={scoreDescriptor.variant}>{scoreDescriptor.label}</Badge>
@@ -638,12 +630,26 @@ function SignalDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="order-1 border-border/70 bg-card/85 shadow-sm xl:order-2 xl:sticky xl:top-5">
-            <CardHeader>
-              <CardDescription>Current focus</CardDescription>
-              <CardTitle className="text-xl">
-                {sidebarSignal?.ticker ?? sidebarSignal?.issuer_cik ?? "Waiting for signals"}
-              </CardTitle>
+          <Card className="linear-panel order-1 border-border/80 bg-card/92 xl:order-2 xl:sticky xl:top-4">
+            <CardHeader className="gap-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="space-y-1">
+                  <CardDescription className="linear-kicker">Lead signal</CardDescription>
+                  <CardTitle className="text-[1.35rem] tracking-[-0.04em]">
+                    {sidebarSignal?.ticker ?? sidebarSignal?.issuer_cik ?? "Waiting for signals"}
+                  </CardTitle>
+                </div>
+                {sidebarSignal ? (
+                  <Badge variant={describeScore(sidebarSignal.signal_score).variant}>
+                    {describeScore(sidebarSignal.signal_score).label}
+                  </Badge>
+                ) : null}
+              </div>
+              <CardDescription>
+                {sidebarSignal
+                  ? "Best current public cluster based on score, breadth, and sizing."
+                  : "A live signal will appear here when the scanner finds a qualifying cluster."}
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {loadingSignals ? (
@@ -654,18 +660,18 @@ function SignalDashboard() {
                 </div>
               ) : sidebarSignal ? (
                 <>
-                  <div className="space-y-2">
-                    <div className="flex items-end gap-3">
-                      <div className="text-5xl font-semibold tracking-tight tabular-nums">
+                  <div className="linear-subpanel space-y-4 p-4">
+                    <div className="flex items-end justify-between gap-3">
+                      <div className="linear-stat">
                         {formatScore(sidebarSignal.signal_score)}
                       </div>
-                      <Badge variant={describeScore(sidebarSignal.signal_score).variant}>
-                        {describeScore(sidebarSignal.signal_score).label}
-                      </Badge>
+                      <div className="text-right">
+                        <div className="linear-kicker mb-1">Issuer</div>
+                        <div className="text-sm font-medium text-foreground">
+                          {sidebarSignal.issuer_name}
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-sm leading-6 text-muted-foreground">
-                      {sidebarSignal.issuer_name}
-                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     <MetricBlock
@@ -718,9 +724,9 @@ function SignalDashboard() {
       </div>
 
       <Sheet onOpenChange={setDetailOpen} open={detailOpen}>
-        <SheetContent className="h-[min(90vh,980px)] p-0" side="center">
+        <SheetContent className="h-[min(92vh,980px)] border-border/85 bg-card/96 p-0" side="center">
           <div className="flex h-full min-h-0 flex-col">
-            <SheetHeader className="gap-3 border-b border-border/60 px-6 py-5 pr-14">
+            <SheetHeader className="gap-4 border-b border-border/80 px-6 py-5 pr-14">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="outline">
                   {detailRecord?.ticker ?? detailRecord?.issuer_cik ?? "Signal"}
@@ -738,7 +744,7 @@ function SignalDashboard() {
                 ) : null}
               </div>
               <div className="space-y-1">
-                <SheetTitle className="text-2xl">
+                <SheetTitle className="text-[1.85rem] tracking-[-0.05em]">
                   {detailRecord?.issuer_name ?? "Signal details"}
                 </SheetTitle>
                 <SheetDescription>
@@ -760,7 +766,7 @@ function SignalDashboard() {
                 <DetailSkeleton />
               ) : detailRecord ? (
                 <Tabs defaultValue="overview" className="min-h-0 gap-4">
-                  <TabsList variant="line" className="w-full justify-start gap-3 border-b border-border/60 pb-1">
+                  <TabsList variant="line" className="w-full justify-start gap-4 border-b border-border/80 pb-1">
                     <TabsTrigger value="overview">Overview</TabsTrigger>
                     <TabsTrigger value="breakdown">Breakdown</TabsTrigger>
                     <TabsTrigger value="evidence">Evidence</TabsTrigger>
@@ -768,10 +774,10 @@ function SignalDashboard() {
 
                   <TabsContent value="overview" className="space-y-4 pt-2">
                     <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_380px]">
-                      <Card className="border border-border/70 bg-card/70">
+                      <Card className="linear-subpanel border-border/80 bg-card/72">
                         <CardHeader>
-                          <CardDescription>Why this is on the board</CardDescription>
-                          <CardTitle>Overview</CardTitle>
+                          <CardDescription className="linear-kicker">Signal context</CardDescription>
+                          <CardTitle>Why it ranks</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                           <div className="grid gap-3 sm:grid-cols-4">
@@ -784,10 +790,10 @@ function SignalDashboard() {
                         </CardContent>
                       </Card>
 
-                      <Card className="border border-border/70 bg-card/70">
+                      <Card className="linear-subpanel border-border/80 bg-card/72">
                         <CardHeader>
-                          <CardDescription>Cluster facts</CardDescription>
-                          <CardTitle>Cluster</CardTitle>
+                          <CardDescription className="linear-kicker">Cluster facts</CardDescription>
+                          <CardTitle>Signal anatomy</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <DefinitionGrid
@@ -806,9 +812,9 @@ function SignalDashboard() {
                     </div>
 
                     <div className="grid gap-4 xl:grid-cols-2">
-                      <Card className="border border-border/70 bg-card/70">
+                      <Card className="linear-subpanel border-border/80 bg-card/72">
                         <CardHeader>
-                          <CardDescription>Issuer snapshot</CardDescription>
+                          <CardDescription className="linear-kicker">Issuer record</CardDescription>
                           <CardTitle>
                             {selectedIssuer?.ticker ?? selectedIssuer?.cik ?? detailRecord.issuer_cik}
                           </CardTitle>
@@ -828,9 +834,9 @@ function SignalDashboard() {
                         </CardContent>
                       </Card>
 
-                      <Card className="border border-border/70 bg-card/70">
+                      <Card className="linear-subpanel border-border/80 bg-card/72">
                         <CardHeader>
-                          <CardDescription>Review setup</CardDescription>
+                          <CardDescription className="linear-kicker">Review setup</CardDescription>
                           <CardTitle>
                             {detailRecord.trade_setup ? "Setup" : "No stored setup"}
                           </CardTitle>
@@ -847,7 +853,7 @@ function SignalDashboard() {
                       </Card>
                     </div>
 
-                    <Card className="border border-border/70 bg-card/70">
+                    <Card className="linear-subpanel border-border/80 bg-card/72">
                       <CardHeader>
                         <div className="flex items-center gap-2">
                           <BrainCircuitIcon className="size-4 text-muted-foreground" />
@@ -892,15 +898,15 @@ function SignalDashboard() {
                   <TabsContent value="breakdown" className="space-y-4 pt-2">
                     <div className="grid gap-4 xl:grid-cols-2">
                       {Object.entries(detailRecord.component_breakdown).map(([componentKey, component]) => (
-                        <Card className="border border-border/70 bg-card/70" key={componentKey}>
+                        <Card className="linear-subpanel border-border/80 bg-card/72" key={componentKey}>
                           <CardHeader>
                             <div className="flex flex-wrap items-center justify-between gap-3">
                               <div>
-                                <CardDescription>Score component</CardDescription>
+                                <CardDescription className="linear-kicker">Score component</CardDescription>
                                 <CardTitle>{formatLabel(componentKey)}</CardTitle>
                               </div>
                               <div className="text-right">
-                                <div className="text-3xl font-semibold tabular-nums">
+                                <div className="text-[2.2rem] font-medium tracking-[-0.05em] tabular-nums">
                                   {component.reweighted_score !== null
                                     ? component.reweighted_score.toFixed(1)
                                     : component.raw_score !== null
@@ -945,9 +951,9 @@ function SignalDashboard() {
 
                   <TabsContent value="evidence" className="space-y-4 pt-2">
                     <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_360px]">
-                      <Card className="border border-border/70 bg-card/70">
+                      <Card className="linear-subpanel border-border/80 bg-card/72">
                         <CardHeader>
-                          <CardDescription>Qualifying transactions</CardDescription>
+                          <CardDescription className="linear-kicker">Qualifying transactions</CardDescription>
                           <CardTitle>Raw filing evidence</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
@@ -958,7 +964,7 @@ function SignalDashboard() {
                               <Card
                                 key={transaction.transaction_id}
                                 size="sm"
-                                className="border border-border/70 bg-background/60 shadow-none"
+                                className="border border-border/80 bg-background/38 shadow-none"
                               >
                                 <CardHeader className="gap-3">
                                   <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
@@ -1028,9 +1034,9 @@ function SignalDashboard() {
                         </CardContent>
                       </Card>
 
-                      <Card className="border border-border/70 bg-card/70">
+                      <Card className="linear-subpanel border-border/80 bg-card/72">
                         <CardHeader>
-                          <CardDescription>Alert history</CardDescription>
+                          <CardDescription className="linear-kicker">Alert history</CardDescription>
                           <CardTitle>Outbound trace</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-3">
@@ -1041,7 +1047,7 @@ function SignalDashboard() {
                               <Card
                                 key={alert.id}
                                 size="sm"
-                                className="border border-border/70 bg-background/60 shadow-none"
+                                className="border border-border/80 bg-background/38 shadow-none"
                               >
                                 <CardHeader className="gap-2">
                                   <div className="flex flex-wrap items-center gap-2">
@@ -1120,17 +1126,21 @@ function ThemeToggle() {
 
 function MetricBlock({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-background/60 p-3">
-      <div className="text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground">
+    <div className="linear-subpanel rounded-[12px] p-3">
+      <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </div>
-      <div className="mt-2 text-lg font-semibold tracking-tight">{value}</div>
+      <div className="mt-2 text-lg font-medium tracking-[-0.03em]">{value}</div>
     </div>
   );
 }
 
 function StatusBadge({ label, value }: { label: string; value: string }) {
-  return <Badge variant={statusVariant(value)}>{label}: {formatLabel(value)}</Badge>;
+  return (
+    <Badge variant={statusVariant(value)}>
+      {label}: {formatLabel(value)}
+    </Badge>
+  );
 }
 
 function DefinitionGrid({
@@ -1151,9 +1161,9 @@ function DefinitionGrid({
       {entries.map((entry) => (
         <div
           key={`${entry.label}-${entry.value}`}
-          className="rounded-2xl border border-border/70 bg-background/60 p-3"
+          className="linear-subpanel rounded-[12px] p-3"
         >
-          <dt className="text-[0.72rem] uppercase tracking-[0.18em] text-muted-foreground">
+          <dt className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
             {entry.label}
           </dt>
           <dd className="mt-2 text-sm leading-6 text-foreground">{entry.value}</dd>
@@ -1168,12 +1178,12 @@ function SignalBoardSkeleton() {
     <div className="grid gap-3">
       <div className="hidden xl:grid xl:grid-cols-[110px_minmax(0,1.5fr)_210px_220px_160px_140px] xl:gap-3">
         {Array.from({ length: 12 }).map((_, index) => (
-          <Skeleton className="h-24 w-full rounded-2xl" key={`desktop-${index}`} />
+          <Skeleton className="h-24 w-full rounded-[14px]" key={`desktop-${index}`} />
         ))}
       </div>
       <div className="grid gap-3 xl:hidden">
         {Array.from({ length: 3 }).map((_, index) => (
-          <Skeleton className="h-52 w-full rounded-2xl" key={`mobile-${index}`} />
+          <Skeleton className="h-52 w-full rounded-[14px]" key={`mobile-${index}`} />
         ))}
       </div>
     </div>
@@ -1184,9 +1194,9 @@ function DetailSkeleton() {
   return (
     <div className="grid gap-4 xl:grid-cols-2">
       {Array.from({ length: 4 }).map((_, index) => (
-        <Skeleton className="h-56 w-full rounded-2xl" key={index} />
+        <Skeleton className="h-56 w-full rounded-[14px]" key={index} />
       ))}
-      <Skeleton className="h-72 w-full rounded-2xl xl:col-span-2" />
+      <Skeleton className="h-72 w-full rounded-[14px] xl:col-span-2" />
     </div>
   );
 }

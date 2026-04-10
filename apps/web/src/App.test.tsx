@@ -210,8 +210,8 @@ describe("App", () => {
       expect(screen.getByRole("heading", { name: /^SECTOR4$/i })).toBeInTheDocument();
     });
 
-    expect(screen.getByText(/^Opportunity board$/i)).toBeInTheDocument();
-    expect(screen.getByText(/^Current focus$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Ranked insider clusters$/i)).toBeInTheDocument();
+    expect(screen.getByText(/^Lead signal$/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Ticker search/i)).toBeInTheDocument();
     expect(screen.queryByLabelText(/Minimum score/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Minimum buyers/i)).not.toBeInTheDocument();
@@ -240,7 +240,7 @@ describe("App", () => {
     render(<App />);
 
     await waitFor(() => {
-      expect(screen.getByText(/^Opportunity board$/i)).toBeInTheDocument();
+      expect(screen.getByText(/^Ranked insider clusters$/i)).toBeInTheDocument();
     });
 
     fireEvent.change(screen.getByLabelText(/Ticker search/i), {
@@ -259,7 +259,7 @@ describe("App", () => {
     });
 
     expect(screen.getByText(/Ticker ACME/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Scanner defaults active/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Default scanner profile/i)).not.toBeInTheDocument();
   });
 });
 

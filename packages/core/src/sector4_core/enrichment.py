@@ -213,6 +213,14 @@ def _should_override_price_context(
         return True
     if current.score is not None:
         return False
+    if _is_placeholder_reason(
+        current.details,
+        {
+            "no_market_data_provider_configured",
+            "market_data_provider_not_implemented",
+        },
+    ) and update.details:
+        return True
     return update.status != "unavailable"
 
 
@@ -221,12 +229,28 @@ def _should_override_health(current: HealthSnapshot, update: HealthSnapshot) -> 
         return True
     if current.score is not None:
         return False
+    if _is_placeholder_reason(
+        current.details,
+        {
+            "fundamental_enrichment_not_implemented",
+            "health_provider_not_configured",
+        },
+    ) and update.details:
+        return True
     return update.status != "unknown"
 
 
 def _should_override_event_context(
     current: EventContextSnapshot, update: EventContextSnapshot
 ) -> bool:
+    if _is_placeholder_reason(
+        current.details,
+        {
+            "later_milestone",
+            "event_context_provider_not_configured",
+        },
+    ) and update.details:
+        return True
     if update.score is not None:
         return True
     if current.score is not None:
@@ -237,6 +261,11 @@ def _should_override_event_context(
         "available": 2,
     }
     return status_rank.get(update.status, 0) > status_rank.get(current.status, 0)
+
+
+def _is_placeholder_reason(details: dict[str, Any], placeholder_reasons: set[str]) -> bool:
+    reason = details.get("reason")
+    return isinstance(reason, str) and reason in placeholder_reasons
 
 
 def get_issuer_enrichment_provider(settings: Settings) -> IssuerEnrichmentProvider:
