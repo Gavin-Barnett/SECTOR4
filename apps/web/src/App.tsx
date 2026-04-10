@@ -137,6 +137,41 @@ type SignalDetail = SignalSummary & {
   }>;
 };
 
+type OutcomeCheckpoint = {
+  checkpoint_label: string;
+  target_date: string;
+  status: string;
+  source: string | null;
+  price_date: string | null;
+  price_value: string | null;
+  return_pct: string | null;
+  details: Record<string, ComponentDetailValue>;
+};
+
+type OutcomeSummary = {
+  signal_id: number;
+  issuer_cik: string;
+  ticker: string | null;
+  issuer_name: string;
+  first_seen_date: string;
+  signal_score_at_mention: string;
+  is_active: boolean;
+  first_seen_price: string | null;
+  first_seen_price_date: string | null;
+  first_seen_price_status: string;
+  week_1_return_pct: string | null;
+  week_1_status: string;
+  week_2_return_pct: string | null;
+  week_2_status: string;
+  week_4_return_pct: string | null;
+  week_4_status: string;
+  latest_completed_checkpoint: string | null;
+  latest_completed_return_pct: string | null;
+  best_return_pct: string | null;
+  worst_return_pct: string | null;
+  checkpoints: OutcomeCheckpoint[];
+};
+
 type IssuerDetail = {
   id: number;
   cik: string;
@@ -170,6 +205,7 @@ type Filters = {
 };
 
 type BadgeVariant = "default" | "secondary" | "outline" | "destructive";
+type ViewMode = "signals" | "results";
 
 type DetailEntry = {
   label: string;
@@ -204,8 +240,10 @@ export default function App() {
   );
 }
 function SignalDashboard() {
+  const [viewMode, setViewMode] = useState<ViewMode>("signals");
   const [health, setHealth] = useState<HealthState | null>(null);
   const [signals, setSignals] = useState<SignalSummary[]>([]);
+  const [results, setResults] = useState<OutcomeSummary[]>([]);
   const [selectedSignalId, setSelectedSignalId] = useState<number | null>(null);
   const [selectedSignal, setSelectedSignal] = useState<SignalDetail | null>(null);
   const [selectedIssuer, setSelectedIssuer] = useState<IssuerDetail | null>(null);
@@ -213,9 +251,11 @@ function SignalDashboard() {
   const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [appliedFilters, setAppliedFilters] = useState<Filters>(DEFAULT_FILTERS);
   const [loadingSignals, setLoadingSignals] = useState(true);
+  const [loadingResults, setLoadingResults] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [healthError, setHealthError] = useState<string | null>(null);
   const [signalsError, setSignalsError] = useState<string | null>(null);
+  const [resultsError, setResultsError] = useState<string | null>(null);
   const [detailError, setDetailError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -291,9 +331,10 @@ function SignalDashboard() {
     selectedSignalId === null
       ? null
       : signals.find((signal) => signal.id === selectedSignalId) ?? null;
+  const activeTicker = appliedFilters.ticker.trim().toUpperCase();
 
   useEffect(() => {
-    if (!selectedSignalId || !selectedSignalSummary) {
+    if (!selectedSignalId) {
       setSelectedSignal(null);
       setSelectedIssuer(null);
       setDetailError(null);
@@ -307,11 +348,11 @@ function SignalDashboard() {
 
     Promise.all([
       fetch(`${API_BASE}/signals/${selectedSignalId}`).then(readJson<SignalDetail>),
-      fetch(`${API_BASE}/issuers/${selectedSignalSummary.issuer_cik}`).then(
-        readJson<IssuerDetail>,
-      ),
     ])
-      .then(([signalPayload, issuerPayload]) => {
+      .then(async ([signalPayload]) => {
+        const issuerPayload = await fetch(
+          `${API_BASE}/issuers/${signalPayload.issuer_cik}`,
+        ).then(readJson<IssuerDetail>);
         if (!active) {
           return;
         }
@@ -335,12 +376,56 @@ function SignalDashboard() {
     return () => {
       active = false;
     };
-  }, [selectedSignalId, selectedSignalSummary]);
+  }, [selectedSignalId]);
 
-  const activeTicker = appliedFilters.ticker.trim().toUpperCase();
+  useEffect(() => {
+    if (viewMode !== "results") {
+      return;
+    }
+
+    let active = true;
+    setLoadingResults(true);
+    setResultsError(null);
+
+    const query = activeTicker ? `?ticker=${activeTicker}` : "";
+    fetch(`${API_BASE}/results${query}`)
+      .then(readJson<OutcomeSummary[]>)
+      .then((payload) => {
+        if (!active) {
+          return;
+        }
+        setResults(payload);
+      })
+      .catch((fetchError: Error) => {
+        if (!active) {
+          return;
+        }
+        setResults([]);
+        setResultsError(fetchError.message);
+      })
+      .finally(() => {
+        if (active) {
+          setLoadingResults(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [viewMode, activeTicker]);
+
   const sidebarSignal = selectedSignalSummary ?? signals[0] ?? null;
   const detailRecord = selectedSignal;
   const healthStatus = health?.status ?? (healthError ? "error" : "pending");
+  const maturedFourWeekCount = results.filter((result) => result.week_4_return_pct !== null).length;
+  const positiveFourWeekCount = results.filter(
+    (result) => result.week_4_return_pct !== null && Number(result.week_4_return_pct) > 0,
+  ).length;
+  const averageFourWeekReturn = averageNumeric(
+    results
+      .map((result) => result.week_4_return_pct)
+      .filter((value): value is string => value !== null),
+  );
 
   function openSignalDetail(signalId: number) {
     setSelectedSignalId(signalId);
@@ -380,7 +465,25 @@ function SignalDashboard() {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+            <div className="flex items-center gap-2 rounded-full border border-border/80 bg-background/50 p-1">
+              <Button
+                onClick={() => setViewMode("signals")}
+                size="sm"
+                type="button"
+                variant={viewMode === "signals" ? "secondary" : "ghost"}
+              >
+                Scanner
+              </Button>
+              <Button
+                onClick={() => setViewMode("results")}
+                size="sm"
+                type="button"
+                variant={viewMode === "results" ? "secondary" : "ghost"}
+              >
+                Results
+              </Button>
+            </div>
             <Badge variant={statusVariant(healthStatus)}>
               API {formatLabel(healthStatus)}
             </Badge>
@@ -388,6 +491,7 @@ function SignalDashboard() {
           </div>
         </header>
 
+        {viewMode === "signals" ? (
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px] xl:items-start">
           <Card className="linear-panel order-2 border-border/80 bg-card/92 xl:order-1">
             <CardHeader className="gap-5 border-b border-border/80">
@@ -721,6 +825,268 @@ function SignalDashboard() {
             </CardContent>
           </Card>
         </div>
+        ) : (
+          <Card className="linear-panel border-border/80 bg-card/92">
+            <CardHeader className="gap-5 border-b border-border/80">
+              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+                <div className="space-y-2">
+                  <p className="linear-kicker">Outcome review</p>
+                  <CardTitle className="text-[1.35rem] tracking-[-0.04em]">
+                    Forward return tracker
+                  </CardTitle>
+                  <CardDescription>
+                    SECTOR4 now logs the first seen market price and checks back after 1, 2, and 4 weeks so the scanner can be judged on outcomes, not memory.
+                  </CardDescription>
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <Badge variant="outline">
+                      {loadingResults ? "Refreshing..." : `${formatCount(results.length)} tracked`}
+                    </Badge>
+                    <Badge variant="outline">
+                      {`${formatCount(maturedFourWeekCount)} completed 4W`}
+                    </Badge>
+                    <Badge variant="secondary">
+                      {`${formatCount(positiveFourWeekCount)} positive 4W`}
+                    </Badge>
+                    {activeTicker ? (
+                      <Badge variant="secondary">Ticker {activeTicker}</Badge>
+                    ) : null}
+                  </div>
+                </div>
+                <form
+                  className="linear-subpanel flex w-full flex-col gap-3 p-3 sm:flex-row sm:items-end lg:w-auto"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    applyTickerSearch();
+                  }}
+                >
+                  <div className="w-full sm:min-w-80">
+                    <label className="linear-kicker mb-2 block" htmlFor="results-ticker-search">
+                      Ticker search
+                    </label>
+                    <Input
+                      id="results-ticker-search"
+                      onChange={(event) =>
+                        setFilters((current) => ({ ...current, ticker: event.target.value }))
+                      }
+                      placeholder="Search tracked ticker"
+                      value={filters.ticker}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    {(filters.ticker || activeTicker) && (
+                      <Button onClick={clearTickerSearch} type="button" variant="outline">
+                        Clear
+                      </Button>
+                    )}
+                    <Button type="submit">
+                      <SearchIcon data-icon="inline-start" />
+                      Search
+                    </Button>
+                  </div>
+                </form>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-5 pt-5">
+              <div className="grid gap-3 md:grid-cols-4">
+                <MetricBlock label="Tracked signals" value={formatCount(results.length)} />
+                <MetricBlock label="Completed 4W" value={formatCount(maturedFourWeekCount)} />
+                <MetricBlock label="Positive 4W" value={formatCount(positiveFourWeekCount)} />
+                <MetricBlock
+                  label="Average 4W"
+                  value={averageFourWeekReturn === null ? "-" : formatPercent(averageFourWeekReturn)}
+                />
+              </div>
+
+              {resultsError ? (
+                <Alert variant="destructive">
+                  <CircleAlertIcon />
+                  <AlertTitle>Results request error</AlertTitle>
+                  <AlertDescription>{resultsError}</AlertDescription>
+                </Alert>
+              ) : loadingResults ? (
+                <ResultsBoardSkeleton />
+              ) : results.length === 0 ? (
+                <Empty className="border-border/70 bg-background/60 py-14">
+                  <EmptyHeader>
+                    <EmptyMedia variant="icon">
+                      <ActivityIcon />
+                    </EmptyMedia>
+                    <EmptyTitle>No tracked outcomes yet</EmptyTitle>
+                    <EmptyDescription>
+                      {activeTicker
+                        ? `No tracked signal matched ${activeTicker}. Clear the search to see every logged result.`
+                        : "Once a signal is first surfaced, SECTOR4 will log its baseline price and start tracking forward returns here."}
+                    </EmptyDescription>
+                  </EmptyHeader>
+                </Empty>
+              ) : (
+                <>
+                  <div className="hidden overflow-hidden rounded-[16px] border border-border/80 bg-background/25 xl:block">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[220px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Signal</TableHead>
+                          <TableHead className="w-[120px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">First seen</TableHead>
+                          <TableHead className="w-[110px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Score</TableHead>
+                          <TableHead className="w-[130px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Base price</TableHead>
+                          <TableHead className="w-[120px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">1W</TableHead>
+                          <TableHead className="w-[120px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">2W</TableHead>
+                          <TableHead className="w-[120px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">4W</TableHead>
+                          <TableHead className="w-[150px] text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Latest read</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {results.map((result) => (
+                          <TableRow
+                            className="cursor-pointer align-top border-t border-border/70 transition-colors hover:bg-white/[0.025]"
+                            key={result.signal_id}
+                            onClick={() => openSignalDetail(result.signal_id)}
+                          >
+                            <TableCell className="align-top whitespace-normal">
+                              <div className="space-y-2 py-0.5">
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <Badge variant="outline">{result.ticker ?? result.issuer_cik}</Badge>
+                                  <Badge variant={result.is_active ? "secondary" : "outline"}>
+                                    {result.is_active ? "Active" : "Archived"}
+                                  </Badge>
+                                </div>
+                                <div className="space-y-1">
+                                  <div className="text-[15px] font-medium tracking-[-0.02em] text-foreground">
+                                    {result.issuer_name}
+                                  </div>
+                                  <p className="text-sm text-muted-foreground">
+                                    Best {formatPercent(result.best_return_pct)} / Worst {formatPercent(result.worst_return_pct)}
+                                  </p>
+                                </div>
+                              </div>
+                            </TableCell>
+                            <TableCell className="align-top text-sm text-muted-foreground">
+                              {formatShortDate(result.first_seen_date)}
+                            </TableCell>
+                            <TableCell className="align-top">
+                              <div className="space-y-1">
+                                <div className="text-xl font-medium tracking-[-0.04em] tabular-nums">
+                                  {formatScore(result.signal_score_at_mention)}
+                                </div>
+                                <Badge variant={describeScore(result.signal_score_at_mention).variant}>
+                                  {describeScore(result.signal_score_at_mention).label}
+                                </Badge>
+                              </div>
+                            </TableCell>
+                            <TableCell className="align-top whitespace-normal text-sm text-muted-foreground">
+                              <div className="font-medium text-foreground">
+                                {formatPrice(result.first_seen_price)}
+                              </div>
+                              <div>
+                                {result.first_seen_price_date
+                                  ? formatShortDate(result.first_seen_price_date)
+                                  : formatLabel(result.first_seen_price_status)}
+                              </div>
+                            </TableCell>
+                            <TableCell className="align-top">
+                              <OutcomeCheckpointValue
+                                checkpoint={checkpointByLabel(result, "week_1")}
+                              />
+                            </TableCell>
+                            <TableCell className="align-top">
+                              <OutcomeCheckpointValue
+                                checkpoint={checkpointByLabel(result, "week_2")}
+                              />
+                            </TableCell>
+                            <TableCell className="align-top">
+                              <OutcomeCheckpointValue
+                                checkpoint={checkpointByLabel(result, "week_4")}
+                              />
+                            </TableCell>
+                            <TableCell className="align-top whitespace-normal text-sm text-muted-foreground">
+                              {result.latest_completed_checkpoint ? (
+                                <div className="space-y-1">
+                                  <div className="font-medium text-foreground">
+                                    {formatCheckpointLabel(result.latest_completed_checkpoint)}
+                                  </div>
+                                  <div>{formatPercent(result.latest_completed_return_pct)}</div>
+                                </div>
+                              ) : (
+                                <Badge variant="outline">Tracking</Badge>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  <div className="grid gap-3 xl:hidden">
+                    {results.map((result) => (
+                      <Card
+                        className="linear-subpanel border-border/80 bg-background/32"
+                        key={result.signal_id}
+                      >
+                        <CardHeader className="gap-3">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="space-y-2">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <Badge variant="outline">{result.ticker ?? result.issuer_cik}</Badge>
+                                <Badge variant={result.is_active ? "secondary" : "outline"}>
+                                  {result.is_active ? "Active" : "Archived"}
+                                </Badge>
+                              </div>
+                              <div>
+                                <CardTitle className="text-base">{result.issuer_name}</CardTitle>
+                                <CardDescription>
+                                  First seen {formatShortDate(result.first_seen_date)}
+                                </CardDescription>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-[1.8rem] font-medium tracking-[-0.05em] tabular-nums">
+                                {formatScore(result.signal_score_at_mention)}
+                              </div>
+                              <Badge variant={describeScore(result.signal_score_at_mention).variant}>
+                                {describeScore(result.signal_score_at_mention).label}
+                              </Badge>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                          <div className="grid grid-cols-2 gap-3">
+                            <MetricBlock label="Base price" value={formatPrice(result.first_seen_price)} />
+                            <MetricBlock
+                              label="Latest"
+                              value={
+                                result.latest_completed_return_pct === null
+                                  ? "Tracking"
+                                  : formatPercent(result.latest_completed_return_pct)
+                              }
+                            />
+                          </div>
+                          <div className="grid grid-cols-3 gap-3">
+                            <OutcomeReturnCard
+                              checkpoint={checkpointByLabel(result, "week_1")}
+                              label="1W"
+                            />
+                            <OutcomeReturnCard
+                              checkpoint={checkpointByLabel(result, "week_2")}
+                              label="2W"
+                            />
+                            <OutcomeReturnCard
+                              checkpoint={checkpointByLabel(result, "week_4")}
+                              label="4W"
+                            />
+                          </div>
+                          <Button className="w-full" onClick={() => openSignalDetail(result.signal_id)} type="button">
+                            Open signal
+                            <ArrowUpRightIcon data-icon="inline-end" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <Sheet onOpenChange={setDetailOpen} open={detailOpen}>
@@ -1135,6 +1501,53 @@ function MetricBlock({ label, value }: { label: string; value: string }) {
   );
 }
 
+function OutcomeReturnCard({
+  label,
+  checkpoint,
+}: {
+  label: string;
+  checkpoint: OutcomeCheckpoint | undefined;
+}) {
+  return (
+    <div className="linear-subpanel rounded-[12px] p-3">
+      <div className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+        {label}
+      </div>
+      <div className="mt-2">
+        <OutcomeCheckpointValue checkpoint={checkpoint} />
+      </div>
+    </div>
+  );
+}
+
+function OutcomeCheckpointValue({
+  checkpoint,
+}: {
+  checkpoint: OutcomeCheckpoint | undefined;
+}) {
+  if (!checkpoint) {
+    return <Badge variant="outline">Missing</Badge>;
+  }
+  if (checkpoint.price_value === null) {
+    return <Badge variant="outline">{formatLabel(checkpoint.status)}</Badge>;
+  }
+  const returnText =
+    checkpoint.return_pct === null
+      ? checkpoint.status === "captured"
+        ? "Base pending"
+        : formatLabel(checkpoint.status)
+      : formatPercent(checkpoint.return_pct);
+  const className = checkpoint.return_pct === null ? "text-muted-foreground" : returnColorClass(checkpoint.return_pct);
+  return (
+    <div className="space-y-1">
+      <div className="text-sm font-medium tabular-nums text-foreground">
+        {formatPrice(checkpoint.price_value)}
+      </div>
+      <div className={cn("text-xs font-medium tabular-nums", className)}>{returnText}</div>
+    </div>
+  );
+}
+
 function StatusBadge({ label, value }: { label: string; value: string }) {
   return (
     <Badge variant={statusVariant(value)}>
@@ -1197,6 +1610,28 @@ function DetailSkeleton() {
         <Skeleton className="h-56 w-full rounded-[14px]" key={index} />
       ))}
       <Skeleton className="h-72 w-full rounded-[14px] xl:col-span-2" />
+    </div>
+  );
+}
+
+function ResultsBoardSkeleton() {
+  return (
+    <div className="grid gap-3">
+      <div className="grid gap-3 md:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <Skeleton className="h-24 w-full rounded-[14px]" key={`metric-${index}`} />
+        ))}
+      </div>
+      <div className="hidden xl:grid xl:grid-cols-8 xl:gap-3">
+        {Array.from({ length: 24 }).map((_, index) => (
+          <Skeleton className="h-20 w-full rounded-[14px]" key={`desktop-${index}`} />
+        ))}
+      </div>
+      <div className="grid gap-3 xl:hidden">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <Skeleton className="h-60 w-full rounded-[14px]" key={`mobile-${index}`} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -1287,6 +1722,33 @@ function formatScore(value: string): string {
   return numeric.toFixed(1);
 }
 
+function formatPercent(value: string | number | null): string {
+  if (value === null) {
+    return "-";
+  }
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "-";
+  }
+  const sign = numeric > 0 ? "+" : "";
+  return `${sign}${numeric.toFixed(2)}%`;
+}
+
+function returnColorClass(value: string | number): string {
+  const numeric = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numeric)) {
+    return "text-muted-foreground";
+  }
+  return numeric >= 0 ? "text-emerald-400 dark:text-emerald-300" : "text-rose-500 dark:text-rose-300";
+}
+
+function checkpointByLabel(
+  result: OutcomeSummary,
+  checkpointLabel: OutcomeCheckpoint["checkpoint_label"],
+): OutcomeCheckpoint | undefined {
+  return result.checkpoints.find((checkpoint) => checkpoint.checkpoint_label === checkpointLabel);
+}
+
 function formatDateValue(value: string): Date {
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return new Date(`${value}T00:00:00`);
@@ -1319,6 +1781,29 @@ function formatLabel(value: string): string {
     .split("_")
     .join(" ")
     .replace(/\b\w/g, (match: string) => match.toUpperCase());
+}
+
+function formatCheckpointLabel(value: string): string {
+  const labels: Record<string, string> = {
+    first_seen: "First seen",
+    week_1: "1 week",
+    week_2: "2 weeks",
+    week_4: "4 weeks",
+  };
+  return labels[value] ?? formatLabel(value);
+}
+
+function averageNumeric(values: Array<string | number>): number | null {
+  if (values.length === 0) {
+    return null;
+  }
+  const numerics = values
+    .map((value) => (typeof value === "number" ? value : Number(value)))
+    .filter((value) => Number.isFinite(value));
+  if (numerics.length === 0) {
+    return null;
+  }
+  return numerics.reduce((sum, value) => sum + value, 0) / numerics.length;
 }
 
 function formatNumericText(value: string | null): string {

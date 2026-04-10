@@ -159,6 +159,34 @@ class SignalWindow(TimestampMixin, Base):
 
     issuer: Mapped[Issuer] = relationship(back_populates="signal_windows")
     alerts: Mapped[list[Alert]] = relationship(back_populates="signal_window")
+    outcome_checkpoints: Mapped[list[SignalOutcomeCheckpoint]] = relationship(
+        back_populates="signal_window", cascade="all, delete-orphan"
+    )
+
+
+class SignalOutcomeCheckpoint(TimestampMixin, Base):
+    __tablename__ = "signal_outcome_checkpoints"
+    __table_args__ = (
+        UniqueConstraint(
+            "signal_window_id",
+            "checkpoint_label",
+            name="uq_signal_outcome_checkpoint_label",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    signal_window_id: Mapped[int] = mapped_column(
+        ForeignKey("signal_windows.id"), nullable=False, index=True
+    )
+    checkpoint_label: Mapped[str] = mapped_column(String(20), nullable=False)
+    target_date: Mapped[date] = mapped_column(Date, nullable=False)
+    status: Mapped[str] = mapped_column(String(50), nullable=False, default="pending")
+    source: Mapped[str | None] = mapped_column(String(100))
+    price_date: Mapped[date | None] = mapped_column(Date)
+    price_value: Mapped[Decimal | None] = mapped_column(Numeric(20, 4))
+    details_json: Mapped[dict[str, Any]] = mapped_column(JSON, default=dict, nullable=False)
+
+    signal_window: Mapped[SignalWindow] = relationship(back_populates="outcome_checkpoints")
 
 
 class Alert(TimestampMixin, Base):

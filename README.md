@@ -63,6 +63,8 @@ For Windows-first local use:
   Starts the normal local stack and keeps existing data.
 - `start-live-dashboard.bat`
   Refreshes recent live SEC filings, then opens the dashboard.
+- `check-sector4.bat`
+  Friendly wrapper for the live refresh flow when you just want to check the latest board.
 - `start-live-only.bat`
   Deletes the local Postgres volume, rebuilds a live-only database, and starts the app with no sample data.
 
@@ -154,6 +156,7 @@ Key routes:
 - `GET /signals`
 - `GET /signals/latest`
 - `GET /signals/{signal_id}`
+- `GET /results`
 - `GET /filings/{accession_number}`
 - `GET /issuers/{ticker_or_cik}`
 - `GET /issuers/{ticker_or_cik}/transactions`
@@ -168,6 +171,7 @@ The dashboard is designed around a ranked opportunity board:
 
 - Recent opportunities in a scan-first list
 - Ticker search for focused lookup
+- Results view that tracks first-seen price plus 1, 2, and 4 week follow-up returns
 - Centered detail modal with transaction evidence, issuer context, and raw filing links
 - Live-only operation supported so mock data does not mix with current filings
 

@@ -12,9 +12,11 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.schemas.browse import FilingDetail, InsiderDetail, IssuerDetail, TransactionRecord
 from app.schemas.ops import OpsBackfillRequest, OpsIngestResponse, OpsLiveIngestRequest
+from app.schemas.results import SignalOutcomeSummary
 from app.schemas.signals import SignalDetail, SignalFilters, SignalRecomputeResponse, SignalSummary
 from app.services.browse import BrowseService
 from app.services.operations import OperationsService
+from app.services.results import ResultsService
 from app.services.signals import SignalService
 from sector4_core.config import get_settings
 from sector4_core.observability import get_metrics_registry
@@ -145,6 +147,11 @@ def list_signals(
 @router.get("/signals/latest", response_model=list[SignalSummary])
 def latest_signals(db: DbSession, limit: LimitQuery = 10) -> list[SignalSummary]:
     return SignalService(db).latest_signals(limit=limit)
+
+
+@router.get("/results", response_model=list[SignalOutcomeSummary])
+def list_results(db: DbSession, ticker: TickerQuery = None) -> list[SignalOutcomeSummary]:
+    return ResultsService(db).list_results(ticker=ticker)
 
 
 @router.get("/signals/{signal_id}", response_model=SignalDetail)

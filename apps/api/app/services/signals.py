@@ -27,6 +27,7 @@ from app.schemas.signals import (
     SignalSummary,
 )
 from app.services.alerts import AlertService, SignalAlertSnapshot
+from app.services.outcomes import SignalOutcomeTracker
 from sector4_ai_summary import (
     SignalSummaryGenerator,
     SignalSummaryResult,
@@ -64,12 +65,14 @@ class SignalService:
         enrichment_provider: IssuerEnrichmentProvider | None = None,
         summary_generator: SignalSummaryGenerator | None = None,
         alert_service: AlertService | None = None,
+        outcome_tracker: SignalOutcomeTracker | None = None,
     ) -> None:
         self.session = session
         self.settings = settings or get_settings()
         self._enrichment_provider = enrichment_provider
         self._summary_generator = summary_generator
         self._alert_service = alert_service
+        self._outcome_tracker = outcome_tracker
         self.metrics = get_metrics_registry()
 
     def _get_enrichment_provider(self) -> IssuerEnrichmentProvider:
@@ -87,6 +90,11 @@ class SignalService:
             self._alert_service = AlertService(self.settings)
         return self._alert_service
 
+    def _get_outcome_tracker(self) -> SignalOutcomeTracker:
+        if self._outcome_tracker is None:
+            self._outcome_tracker = SignalOutcomeTracker(self.session, self.settings)
+        return self._outcome_tracker
+
     def _close_resources(self) -> None:
         if self._enrichment_provider is not None:
             self._enrichment_provider.close()
@@ -94,6 +102,8 @@ class SignalService:
             self._summary_generator.close()
         if self._alert_service is not None:
             self._alert_service.close()
+        if self._outcome_tracker is not None:
+            self._outcome_tracker.close()
 
     def recompute(self) -> SignalRecomputeResponse:
         try:
@@ -198,6 +208,8 @@ class SignalService:
 
             for signal_key, record in existing_by_key.items():
                 record.is_active = signal_key in current_keys
+
+            self._get_outcome_tracker().refresh_signals(list(existing_by_key.values()))
 
             self.session.commit()
             self.metrics.increment("signals.generated_total", len(persisted_ids))

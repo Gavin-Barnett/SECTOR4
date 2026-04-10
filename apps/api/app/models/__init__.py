@@ -4,6 +4,7 @@ from app.models.entities import (
     Insider,
     InsiderCompensation,
     Issuer,
+    SignalOutcomeCheckpoint,
     SignalWindow,
     Transaction,
 )
@@ -14,6 +15,7 @@ __all__ = [
     "Insider",
     "InsiderCompensation",
     "Issuer",
+    "SignalOutcomeCheckpoint",
     "SignalWindow",
     "Transaction",
 ]

@@ -42,6 +42,78 @@ const fetchMock = vi.fn((input: RequestInfo | URL) => {
     });
   }
 
+  if (url.includes("/results")) {
+    return Promise.resolve({
+      ok: true,
+      json: async () => [
+        {
+          signal_id: 1,
+          issuer_cik: "0001234567",
+          ticker: "ACME",
+          issuer_name: "Acme Robotics, Inc.",
+          first_seen_date: "2024-02-20",
+          signal_score_at_mention: "77.30",
+          is_active: true,
+          first_seen_price: "10.0000",
+          first_seen_price_date: "2024-02-20",
+          first_seen_price_status: "captured",
+          week_1_return_pct: "10.00",
+          week_1_status: "captured",
+          week_2_return_pct: "20.00",
+          week_2_status: "captured",
+          week_4_return_pct: "40.00",
+          week_4_status: "captured",
+          latest_completed_checkpoint: "week_4",
+          latest_completed_return_pct: "40.00",
+          best_return_pct: "40.00",
+          worst_return_pct: "10.00",
+          checkpoints: [
+            {
+              checkpoint_label: "first_seen",
+              target_date: "2024-02-20",
+              status: "captured",
+              source: "static_daily",
+              price_date: "2024-02-20",
+              price_value: "10.0000",
+              return_pct: null,
+              details: {},
+            },
+            {
+              checkpoint_label: "week_1",
+              target_date: "2024-02-27",
+              status: "captured",
+              source: "static_daily",
+              price_date: "2024-02-27",
+              price_value: "11.0000",
+              return_pct: "10.00",
+              details: {},
+            },
+            {
+              checkpoint_label: "week_2",
+              target_date: "2024-03-05",
+              status: "captured",
+              source: "static_daily",
+              price_date: "2024-03-05",
+              price_value: "12.0000",
+              return_pct: "20.00",
+              details: {},
+            },
+            {
+              checkpoint_label: "week_4",
+              target_date: "2024-03-19",
+              status: "captured",
+              source: "static_daily",
+              price_date: "2024-03-19",
+              price_value: "14.0000",
+              return_pct: "40.00",
+              details: {},
+            },
+          ],
+        },
+      ],
+    });
+  }
+
   if (url.includes("/signals/") && !url.endsWith("/signals/latest")) {
     return Promise.resolve({
       ok: true,
@@ -260,6 +332,29 @@ describe("App", () => {
 
     expect(screen.getByText(/Ticker ACME/i)).toBeInTheDocument();
     expect(screen.queryByText(/Default scanner profile/i)).not.toBeInTheDocument();
+  });
+
+  it("shows the forward return results view", async () => {
+    render(<App />);
+
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /Results/i })).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Results/i }));
+
+    await waitFor(() => {
+      expect(screen.getByText(/^Forward return tracker$/i)).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/SECTOR4 now logs the first seen market price/i)).toBeInTheDocument();
+    expect(screen.getByText(/Tracked signals/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/\$11.00/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\$12.00/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\$14.00/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\+10.00%/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\+40.00%/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/4 weeks/i).length).toBeGreaterThan(0);
   });
 });
 
