@@ -1,0 +1,61 @@
+﻿<ownershipDocument>
+  <schemaVersion>X0306</schemaVersion>
+  <documentType>4</documentType>
+  <periodOfReport>2024-02-28</periodOfReport>
+  <issuer>
+    <issuerCik>0007654321</issuerCik>
+    <issuerName>Beacon Medical Holdings, Inc.</issuerName>
+    <issuerTradingSymbol>BMED</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0009999999</rptOwnerCik>
+      <rptOwnerName>John Routine</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>0</isDirector>
+      <isOfficer>1</isOfficer>
+      <isTenPercentOwner>0</isTenPercentOwner>
+      <officerTitle>Chief Financial Officer</officerTitle>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle>
+        <value>Common Stock</value>
+      </securityTitle>
+      <transactionDate>
+        <value>2024-02-28</value>
+      </transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>P</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares>
+          <value>250</value>
+        </transactionShares>
+        <transactionPricePerShare>
+          <value>4.50</value>
+        </transactionPricePerShare>
+        <transactionAcquiredDisposedCode>
+          <value>A</value>
+        </transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction>
+          <value>9000</value>
+        </sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <ownershipNature>
+        <directOrIndirectOwnership>
+          <value>I</value>
+        </directOrIndirectOwnership>
+      </ownershipNature>
+      <footnoteId id="F1" />
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+  <footnotes>
+    <footnote id="F1">Transaction executed under a Rule 10b5-1 plan through an indirect family trust.</footnote>
+  </footnotes>
+</ownershipDocument>

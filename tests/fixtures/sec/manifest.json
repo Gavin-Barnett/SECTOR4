@@ -1,0 +1,34 @@
+﻿[
+  {
+    "accession_number": "0001234567-24-000001",
+    "form_type": "4",
+    "filed_at": "2024-02-15T14:30:00+00:00",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1234567/000123456724000001.txt",
+    "xml_url": "https://www.sec.gov/Archives/edgar/data/1234567/000123456724000001/ownership.xml",
+    "fixture_path": "form4_open_market_purchase.xml"
+  },
+  {
+    "accession_number": "0001234567-24-000002",
+    "form_type": "4/A",
+    "filed_at": "2024-02-20T20:15:00+00:00",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1234567/000123456724000002.txt",
+    "xml_url": "https://www.sec.gov/Archives/edgar/data/1234567/000123456724000002/ownership.xml",
+    "fixture_path": "form4_amendment_purchase.xml"
+  },
+  {
+    "accession_number": "0001234567-24-000004",
+    "form_type": "4",
+    "filed_at": "2024-02-19T18:45:00+00:00",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/1234567/000123456724000004.txt",
+    "xml_url": "https://www.sec.gov/Archives/edgar/data/1234567/000123456724000004/ownership.xml",
+    "fixture_path": "form4_second_insider_purchase.xml"
+  },
+  {
+    "accession_number": "0007654321-24-000003",
+    "form_type": "4",
+    "filed_at": "2024-03-01T16:00:00+00:00",
+    "source_url": "https://www.sec.gov/Archives/edgar/data/7654321/000765432124000003.txt",
+    "xml_url": "https://www.sec.gov/Archives/edgar/data/7654321/000765432124000003/ownership.xml",
+    "fixture_path": "form4_indirect_plan.xml"
+  }
+]

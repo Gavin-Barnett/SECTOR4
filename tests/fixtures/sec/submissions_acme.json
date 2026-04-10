@@ -1,0 +1,58 @@
+{
+  "cik": "0001234567",
+  "entityType": "operating",
+  "sic": "3571",
+  "sicDescription": "Electronic Computers",
+  "stateOfIncorporation": "DE",
+  "name": "Acme Robotics, Inc.",
+  "tickers": ["ACME"],
+  "exchanges": ["NASDAQ"],
+  "filings": {
+    "recent": {
+      "accessionNumber": [
+        "0001234567-24-000901",
+        "0001234567-24-000900",
+        "0001234567-24-000850",
+        "0001234567-24-000700"
+      ],
+      "filingDate": [
+        "2024-02-15",
+        "2024-02-12",
+        "2024-02-09",
+        "2024-01-05"
+      ],
+      "reportDate": [
+        "2024-02-15",
+        "2024-02-12",
+        "2023-12-31",
+        "2024-01-05"
+      ],
+      "acceptanceDateTime": [
+        "20240215173000",
+        "20240212163000",
+        "20240209160500",
+        "20240105120000"
+      ],
+      "act": ["34", "34", "34", "33"],
+      "form": ["8-K", "8-K", "10-Q", "S-8"],
+      "fileNumber": ["001-00001", "001-00001", "001-00001", "333-00001"],
+      "filmNumber": ["24594567", "24590123", "24581234", "24510000"],
+      "items": ["1.01,8.01", "2.02,9.01", "", ""],
+      "size": [16789, 12345, 45678, 23456],
+      "isXBRL": [0, 0, 1, 0],
+      "isInlineXBRL": [0, 0, 1, 0],
+      "primaryDocument": [
+        "acme-20240215x8k.htm",
+        "acme-20240212x8k.htm",
+        "acme-20240209x10q.htm",
+        "acme-20240105xs8.htm"
+      ],
+      "primaryDocDescription": [
+        "Current report",
+        "Current report",
+        "Quarterly report",
+        "Securities to be offered"
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+﻿Description:           Master Index of EDGAR Dissemination Feed
+Last Data Received:    Mar 01, 2024
+Comments:              webmaster@sec.gov
+Anonymous FTP:         ftp://ftp.sec.gov/edgar/
+Cloud HTTP:            https://www.sec.gov/Archives/
+
+CIK|Company Name|Form Type|Date Filed|Filename
+--------------------------------------------------------------------------------
+4  Acme Robotics, Inc.  1234567  2024-02-15  edgar/data/1234567/000123456724000001.txt
+8-K  Acme Robotics, Inc.  1234567  2024-02-15  edgar/data/1234567/000123456724000005.txt
+4/A  Acme Robotics, Inc.  1234567  2024-02-20  edgar/data/1234567/000123456724000002.txt

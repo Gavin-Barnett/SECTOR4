@@ -1,0 +1,62 @@
+﻿<ownershipDocument>
+  <schemaVersion>X0306</schemaVersion>
+  <documentType>4/A</documentType>
+  <dateOfOriginalSubmission>2024-02-16</dateOfOriginalSubmission>
+  <periodOfReport>2024-02-14</periodOfReport>
+  <issuer>
+    <issuerCik>0001234567</issuerCik>
+    <issuerName>Acme Robotics, Inc.</issuerName>
+    <issuerTradingSymbol>ACME</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0007654321</rptOwnerCik>
+      <rptOwnerName>Jane Example</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>1</isDirector>
+      <isOfficer>1</isOfficer>
+      <isTenPercentOwner>0</isTenPercentOwner>
+      <officerTitle>Chief Executive Officer</officerTitle>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle>
+        <value>Common Stock</value>
+      </securityTitle>
+      <transactionDate>
+        <value>2024-02-14</value>
+      </transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>P</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares>
+          <value>12000</value>
+        </transactionShares>
+        <transactionPricePerShare>
+          <value>11.90</value>
+        </transactionPricePerShare>
+        <transactionAcquiredDisposedCode>
+          <value>A</value>
+        </transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction>
+          <value>152000</value>
+        </sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <ownershipNature>
+        <directOrIndirectOwnership>
+          <value>D</value>
+        </directOrIndirectOwnership>
+      </ownershipNature>
+      <footnoteId id="F1" />
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+  <footnotes>
+    <footnote id="F1">Amendment corrects the share count for the open-market purchase.</footnote>
+  </footnotes>
+</ownershipDocument>

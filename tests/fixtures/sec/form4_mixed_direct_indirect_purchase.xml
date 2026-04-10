@@ -1,0 +1,95 @@
+<ownershipDocument>
+  <schemaVersion>X0306</schemaVersion>
+  <documentType>4</documentType>
+  <periodOfReport>2024-02-18</periodOfReport>
+  <issuer>
+    <issuerCik>0001234567</issuerCik>
+    <issuerName>Acme Robotics, Inc.</issuerName>
+    <issuerTradingSymbol>ACME</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0001111111</rptOwnerCik>
+      <rptOwnerName>Maria Example</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>1</isDirector>
+      <isOfficer>0</isOfficer>
+      <isTenPercentOwner>0</isTenPercentOwner>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle>
+        <value>Common Stock</value>
+      </securityTitle>
+      <transactionDate>
+        <value>2024-02-18</value>
+      </transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>P</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares>
+          <value>7000</value>
+        </transactionShares>
+        <transactionPricePerShare>
+          <value>12.50</value>
+        </transactionPricePerShare>
+        <transactionAcquiredDisposedCode>
+          <value>A</value>
+        </transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction>
+          <value>50000</value>
+        </sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <ownershipNature>
+        <directOrIndirectOwnership>
+          <value>D</value>
+        </directOrIndirectOwnership>
+      </ownershipNature>
+      <footnoteId id="F1" />
+    </nonDerivativeTransaction>
+    <nonDerivativeTransaction>
+      <securityTitle>
+        <value>Common Stock</value>
+      </securityTitle>
+      <transactionDate>
+        <value>2024-02-18</value>
+      </transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>P</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares>
+          <value>3000</value>
+        </transactionShares>
+        <transactionPricePerShare>
+          <value>11.50</value>
+        </transactionPricePerShare>
+        <transactionAcquiredDisposedCode>
+          <value>A</value>
+        </transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction>
+          <value>12000</value>
+        </sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <ownershipNature>
+        <directOrIndirectOwnership>
+          <value>I</value>
+        </directOrIndirectOwnership>
+      </ownershipNature>
+      <footnoteId id="F2" />
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+  <footnotes>
+    <footnote id="F1">Open-market purchase executed directly.</footnote>
+    <footnote id="F2">Open-market purchase executed through an affiliated family vehicle.</footnote>
+  </footnotes>
+</ownershipDocument>

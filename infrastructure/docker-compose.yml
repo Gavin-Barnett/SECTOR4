@@ -1,0 +1,54 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sector4
+      POSTGRES_USER: sector4
+      POSTGRES_PASSWORD: sector4
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sector4 -d sector4"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    env_file:
+      - ../.env
+    environment:
+      PYTHONPATH: /workspace/apps/api:/workspace/packages/core/src:/workspace/packages/sec_ingestion/src:/workspace/packages/scoring/src:/workspace/packages/ai_summary/src
+    working_dir: /workspace
+    volumes:
+      - ..:/workspace
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  web:
+    build:
+      context: ..
+      dockerfile: apps/web/Dockerfile
+    working_dir: /workspace/apps/web
+    volumes:
+      - ..:/workspace
+      - web_node_modules:/workspace/apps/web/node_modules
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "${WEB_PORT:-5180}:${WEB_PORT:-5180}"
+    depends_on:
+      - api
+    command: npm run dev -- --host 0.0.0.0 --port ${WEB_PORT:-5180}
+
+volumes:
+  postgres_data:
+  web_node_modules:

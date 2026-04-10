@@ -1,0 +1,29 @@
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+pythonpath = [
+  "apps/api",
+  "packages/core/src",
+  "packages/sec_ingestion/src",
+  "packages/scoring/src",
+  "packages/ai_summary/src",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = [
+  "apps/api",
+  "packages/core/src",
+  "packages/sec_ingestion/src",
+  "packages/scoring/src",
+  "packages/ai_summary/src",
+  "tests",
+]
+
+[tool.ruff.lint]
+select = ["B", "C4", "E", "F", "I", "N", "UP"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"

@@ -1,0 +1,61 @@
+﻿<ownershipDocument>
+  <schemaVersion>X0306</schemaVersion>
+  <documentType>4</documentType>
+  <periodOfReport>2024-02-18</periodOfReport>
+  <issuer>
+    <issuerCik>0001234567</issuerCik>
+    <issuerName>Acme Robotics, Inc.</issuerName>
+    <issuerTradingSymbol>ACME</issuerTradingSymbol>
+  </issuer>
+  <reportingOwner>
+    <reportingOwnerId>
+      <rptOwnerCik>0008888888</rptOwnerCik>
+      <rptOwnerName>Mark Example</rptOwnerName>
+    </reportingOwnerId>
+    <reportingOwnerRelationship>
+      <isDirector>1</isDirector>
+      <isOfficer>0</isOfficer>
+      <isTenPercentOwner>0</isTenPercentOwner>
+      <officerTitle></officerTitle>
+    </reportingOwnerRelationship>
+  </reportingOwner>
+  <nonDerivativeTable>
+    <nonDerivativeTransaction>
+      <securityTitle>
+        <value>Common Stock</value>
+      </securityTitle>
+      <transactionDate>
+        <value>2024-02-18</value>
+      </transactionDate>
+      <transactionCoding>
+        <transactionFormType>4</transactionFormType>
+        <transactionCode>P</transactionCode>
+      </transactionCoding>
+      <transactionAmounts>
+        <transactionShares>
+          <value>9000</value>
+        </transactionShares>
+        <transactionPricePerShare>
+          <value>13.00</value>
+        </transactionPricePerShare>
+        <transactionAcquiredDisposedCode>
+          <value>A</value>
+        </transactionAcquiredDisposedCode>
+      </transactionAmounts>
+      <postTransactionAmounts>
+        <sharesOwnedFollowingTransaction>
+          <value>54000</value>
+        </sharesOwnedFollowingTransaction>
+      </postTransactionAmounts>
+      <ownershipNature>
+        <directOrIndirectOwnership>
+          <value>D</value>
+        </directOrIndirectOwnership>
+      </ownershipNature>
+      <footnoteId id="F1" />
+    </nonDerivativeTransaction>
+  </nonDerivativeTable>
+  <footnotes>
+    <footnote id="F1">Open-market purchase executed personally by the director.</footnote>
+  </footnotes>
+</ownershipDocument>

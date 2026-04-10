@@ -1,0 +1,220 @@
+{
+  "cik": 1234567,
+  "entityName": "Acme Robotics, Inc.",
+  "facts": {
+    "dei": {
+      "EntityPublicFloat": {
+        "label": "Entity Public Float",
+        "units": {
+          "USD": [
+            {
+              "end": "2023-12-31",
+              "val": 240000000,
+              "fy": 2023,
+              "fp": "FY",
+              "form": "10-K",
+              "filed": "2024-02-09"
+            }
+          ]
+        }
+      },
+      "EntityCommonStockSharesOutstanding": {
+        "label": "Entity Common Stock Shares Outstanding",
+        "units": {
+          "shares": [
+            {
+              "end": "2024-03-31",
+              "val": 25000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      }
+    },
+    "us-gaap": {
+      "AssetsCurrent": {
+        "label": "Assets, Current",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 18000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "LiabilitiesCurrent": {
+        "label": "Liabilities, Current",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 6000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "Assets": {
+        "label": "Assets",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 95000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "Liabilities": {
+        "label": "Liabilities",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 42000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "StockholdersEquity": {
+        "label": "Stockholders' Equity",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 53000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "RetainedEarningsAccumulatedDeficit": {
+        "label": "Retained Earnings (Accumulated Deficit)",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 20000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "OperatingIncomeLoss": {
+        "label": "Operating Income (Loss)",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 8000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "RevenueFromContractWithCustomerExcludingAssessedTax": {
+        "label": "Revenue From Contract With Customer, Excluding Assessed Tax",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 120000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "CashAndCashEquivalentsAtCarryingValue": {
+        "label": "Cash and Cash Equivalents at Carrying Value",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 17000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "LongTermDebtCurrent": {
+        "label": "Long-term Debt, Current",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 4000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "LongTermDebtNoncurrent": {
+        "label": "Long-term Debt, Noncurrent",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 16000000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      },
+      "InterestExpenseAndDebtExpense": {
+        "label": "Interest Expense and Debt Expense",
+        "units": {
+          "USD": [
+            {
+              "end": "2024-03-31",
+              "val": 1200000,
+              "fy": 2024,
+              "fp": "Q1",
+              "form": "10-Q",
+              "filed": "2024-05-09"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
